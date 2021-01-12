@@ -1,0 +1,51 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Todo List</h1>
+
+<hr />
+
+<form action="/todos" method="POST" class="mb-5">
+  <div class="form-group">
+    <label for="content">New Todo</label>
+    <input type="text" class="form-control" name="content" id="content" />
+  </div>
+
+  <button class="btn btn-success mt-2 mb-2">Add</button>
+</form>
+
+{% if data %}
+
+<div class="todos list-group">
+  {% for item in data %} {% if item[2] == 0 %}
+  <div class="todo-item list-group-item">
+    <span>{{item[1]}}</span>
+    <div class="buttons">
+      <form action="/todos/{{item[0]}}" method="GET">
+        <input type="hidden" name="is_completed" value="1">
+        <button type="submit" class="btn btn-warning">Update</button>
+      </form>
+      <form action="/todos/{{item[0]}}" method="POST">
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <div class="todo-item list-group-item bg-danger text-light">
+    <span>{{item[1]}}</span>
+    <div class="buttons">
+      <form action="/todos/{{item[0]}}" method="GET">
+        <input type="hidden" name="is_completed" value="0">
+        <button type="submit" class="btn btn-warning">Update</button>
+      </form>
+      <form action="/todos/{{item[0]}}" method="POST">
+        <button type="submit" class="btn btn-light">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endif %} {% endfor %}
+</div>
+
+{% else %}
+
+<div class="alert alert-info">No todos to show !</div>
+
+{% endif %} {% endblock %}
