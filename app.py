@@ -1,5 +1,5 @@
 from flask_mysqldb import MySQL
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, request, make_response, jsonify, render_template, redirect
 
 app = Flask(__name__)
 
@@ -12,6 +12,75 @@ mysql = MySQL(app)
 
 
 @app.route('/')
+def home():
+    cur = mysql.connection.cursor()
+    cur.execute('''SELECT * FROM todos''')
+    todos = cur.fetchall()
+    print(f"{todos}")
+    return render_template('index.html', data=todos)
+
+
+@app.route('/todos', methods=['POST'])
+def createTodo():
+    content = request.form.get('content')
+
+    cur = mysql.connection.cursor()
+    res2 = cur.execute(
+        f"INSERT INTO `todos` (`content`, `is_completed`) VALUES ('{content}', '{0}')")
+    res = mysql.connection.commit()
+
+    return redirect('/')
+
+
+@app.route('/todos/<todo_id>', methods=['POST'])
+def deleteTodo(todo_id):
+    cur = mysql.connection.cursor()
+    if not cur.execute(f"DELETE FROM todos WHERE todos.id={int(todo_id)}"):
+        return make_response({
+            "message": "user not found"
+        }, 404)
+    res = mysql.connection.commit()
+
+    return redirect('/')
+
+
+@app.route('/todos/<todo_id>', methods=['GET'])
+def updateTodo(todo_id):
+    is_completed = request.form.get('is_completed')
+
+    return is_completed
+
+    cur = mysql.connection.cursor()
+    res2 = cur.execute(
+        f"UPDATE todos SET `is_completed` = '{is_completed}' WHERE `todos`.`id` = {int(todo_id)}")
+
+    res = mysql.connection.commit()
+
+    return redirect('/')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
+@app.route('/help')
+def help():
+    return render_template('help.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+'''
+
+    API ROUTES
+
+'''
+
+
+@app.route('/api')
 def hello():
     return {
         "status": "ok",
