@@ -15,33 +15,28 @@
 {% if data %}
 
 <div class="todos list-group">
-  {% for item in data %} {% if item[2] == 0 %}
-  <div class="todo-item list-group-item">
+  {% for item in data %}
+  <div
+    class="todo-item list-group-item {% if item[2] == 1 %}{{'text-secondary done'}}{% endif %}"
+  >
     <span>{{item[1]}}</span>
     <div class="buttons">
-      <form action="/todos/{{item[0]}}" method="GET">
-        <input type="hidden" name="is_completed" value="1">
-        <button type="submit" class="btn btn-warning">Update</button>
+      <form action="/todos/{{item[0]}}" method="GET" style="margin: 2px">
+        <input
+          type="hidden"
+          name="is_completed"
+          value="{% if item[2] == 1 %}{{0}}{% else %}{{1}}{% endif %}"
+        />
+        <button type="submit" class="btn btn-outline-warning">
+          {% if item[2] == 1 %} Mark as todo {% else %} Mark as done {% endif %}
+        </button>
       </form>
-      <form action="/todos/{{item[0]}}" method="POST">
-        <button type="submit" class="btn btn-danger">Delete</button>
+      <form action="/todos/{{item[0]}}" method="POST" style="margin: 2px">
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
       </form>
     </div>
   </div>
-  {% else %}
-  <div class="todo-item list-group-item bg-danger text-light">
-    <span>{{item[1]}}</span>
-    <div class="buttons">
-      <form action="/todos/{{item[0]}}" method="GET">
-        <input type="hidden" name="is_completed" value="0">
-        <button type="submit" class="btn btn-warning">Update</button>
-      </form>
-      <form action="/todos/{{item[0]}}" method="POST">
-        <button type="submit" class="btn btn-light">Delete</button>
-      </form>
-    </div>
-  </div>
-  {% endif %} {% endfor %}
+  {% endfor %}
 </div>
 
 {% else %}

@@ -46,9 +46,7 @@ def deleteTodo(todo_id):
 
 @app.route('/todos/<todo_id>', methods=['GET'])
 def updateTodo(todo_id):
-    is_completed = request.form.get('is_completed')
-
-    return is_completed
+    is_completed = request.args.get('is_completed')
 
     cur = mysql.connection.cursor()
     res2 = cur.execute(
